@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stone & Acres — A Decade of Dreams</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --green-pale: #d8f3dc;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --cream: #faf7f2;
+    --dark: #1a1a1a;
+    --stone: #6b6560;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    position: fixed; inset: 0; z-index: 999;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+
+  #particles-canvas {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+
+  .intro-ten {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(180px, 35vw, 320px);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--green-light);
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.6);
+    animation: tenReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+    position: relative;
+    z-index: 2;
+    letter-spacing: -0.02em;
+  }
+
+  .intro-ten::after {
+    content: '✦';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.18em;
+    color: var(--gold);
+    opacity: 0;
+    animation: starPop 0.4s ease 1.4s forwards;
+  }
+
+  .intro-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(14px, 2.5vw, 20px);
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: var(--green-light);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.5s forwards;
+    position: relative; z-index: 2;
+    margin-top: 12px;
+  }
+
+  .intro-cta {
+    margin-top: 48px;
+    padding: 14px 48px;
+    border: 1px solid var(--green-light);
+    color: var(--green-light);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeUp 1s ease 2s forwards;
+    position: relative; z-index: 2;
+    transition: all 0.4s ease;
+  }
+  .intro-cta:hover {
+    background: var(--green-light);
+    color: #000;
+  }
+
+  @keyframes tenReveal {
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes starPop {
+    to { opacity: 1; }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── LOGO ANIMATION ── */
+  #logo-anim {
+    position: fixed;
+    z-index: 998;
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #logo-anim img { height: 44px; filter: invert(1); }
+  #logo-text-anim {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #fff;
+    font-weight: 500;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── MAIN PAGE ── */
+  #main-page {
+    opacity: 0;
+    background: var(--cream);
+    min-height: 100vh;
+  }
+
+  /* ── FIXED HEADER ── */
+  #site-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+    opacity: 0;
+  }
+  .header-logo { display: flex; align-items: center; gap: 10px; }
+  .header-logo img { height: 32px; }
+  .header-logo span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dark);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .header-badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    font-style: italic;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+  }
+
+  .hero-bg-ten {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(300px, 55vw, 600px);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(45,106,79,0.07);
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.45em;
+    color: var(--green);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 24px;
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 7vw, 86px);
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+  .hero-title em {
+    color: var(--green);
+    font-style: italic;
+  }
+
+  .hero-divider {
+    display: flex; align-items: center; gap: 16px;
+    margin: 32px auto;
+    width: fit-content;
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+  .hero-divider span { font-size: 18px; color: var(--gold); }
+  .hero-divider::before, .hero-divider::after {
+    content: '';
+    width: 80px; height: 0.5px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .hero-divider::after { background: linear-gradient(to left, transparent, var(--gold)); }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.6;
+    max-width: 600px;
+    font-style: italic;
+    position: relative; z-index: 2;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+
+  /* ── ENVELOPE / CARD SECTION ── */
+  #envelope-section {
+    background: var(--green);
+    padding: 100px 40px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .env-bg-ten {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(280px, 50vw, 500px);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.05);
+    user-select: none; pointer-events: none;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .env-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.45em;
+    color: var(--green-pale);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 20px;
+    position: relative; z-index: 2;
+  }
+
+  .invitation-card {
+    background: var(--cream);
+    max-width: 560px; width: 100%;
+    padding: 56px 48px;
+    position: relative; z-index: 2;
+    text-align: center;
+    border: 0.5px solid var(--gold-light);
+  }
+
+  .card-ornament {
+    color: var(--gold);
+    font-size: 22px;
+    letter-spacing: 8px;
+    margin-bottom: 28px;
+    display: block;
+  }
+
+  .card-to {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--stone);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 300;
+    color: var(--dark);
+    font-style: italic;
+    margin-bottom: 28px;
+    line-height: 1.2;
+  }
+
+  .card-divider {
+    width: 60px; height: 0.5px;
+    background: var(--gold);
+    margin: 0 auto 28px;
+  }
+
+  .card-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 2vw, 19px);
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.9;
+    font-style: italic;
+  }
+
+  .card-body strong {
+    font-weight: 600;
+    color: var(--green);
+    font-style: normal;
+  }
+
+  .card-date {
+    margin-top: 32px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--stone);
+    text-transform: uppercase;
+  }
+
+  .card-seal {
+    display: inline-block;
+    margin-top: 32px;
+    width: 60px; height: 60px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin: 32px auto 0;
+    text-transform: uppercase;
+  }
+
+  /* ── OFFERS SECTION ── */
+  #offers-section {
+    background: var(--cream);
+    padding: 100px 40px;
+    text-align: center;
+  }
+
+  .section-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.45em;
+    color: var(--green);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .section-title em { color: var(--green); font-style: italic; }
+
+  .section-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--stone);
+    font-style: italic;
+    margin-bottom: 60px;
+  }
+
+  .offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .offer-card {
+    background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.08);
+    padding: 40px 32px;
+    text-align: left;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .offer-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+  }
+
+  .offer-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--green-pale);
+    line-height: 1;
+    margin-bottom: 16px;
+    -webkit-text-stroke: 1px var(--green-light);
+    color: transparent;
+  }
+
+  .offer-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .offer-desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--stone);
+    line-height: 1.8;
+  }
+
+  .offer-tag {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 6px 14px;
+    background: var(--green-pale);
+    color: var(--green);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── CTA SECTION ── */
+  #cta-section {
+    background: var(--dark);
+    padding: 100px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-bg-ten {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(280px, 50vw, 500px);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.03);
+    user-select: none; pointer-events: none;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    position: relative; z-index: 2;
+  }
+  .cta-title em { color: var(--green-light); font-style: italic; }
+
+  .cta-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 48px;
+    position: relative; z-index: 2;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 18px 56px;
+    background: var(--green);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    position: relative; z-index: 2;
+    transition: background 0.3s ease;
+  }
+  .cta-btn:hover { background: var(--green-light); color: #000; }
+
+  .cta-note {
+    margin-top: 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    position: relative; z-index: 2;
+  }
+
+  /* ── FOOTER ── */
+  #footer {
+    background: #111;
+    padding: 40px;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+  #footer img { height: 24px; filter: invert(1); opacity: 0.6; }
+  #footer span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ── FLOATING 10s ── */
+  .float-ten {
+    position: fixed;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    color: transparent;
+    pointer-events: none;
+    z-index: 997;
+    opacity: 0;
+    animation: floatUp var(--dur) ease-in var(--delay) forwards;
+  }
+  @keyframes floatUp {
+    0%   { opacity: 0; transform: translateY(0) scale(0.8); }
+    20%  { opacity: 1; }
+    80%  { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-120px) scale(1.1); }
+  }
+
+  @media (max-width: 600px) {
+    #site-header { padding: 16px 20px; }
+    #hero, #envelope-section, #offers-section, #cta-section { padding: 80px 24px; }
+    .invitation-card { padding: 40px 28px; }
+    .offers-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO SCREEN -->
+<div id="intro">
+  <canvas id="particles-canvas"></canvas>
+  <div class="intro-ten">10</div>
+  <div class="intro-tagline">Years of Stone & Acres</div>
+  <button class="intro-cta" onclick="openInvitation()">Open Your Invitation ✦</button>
+</div>
+
+<!-- LOGO ANIMATION (positioned by JS) -->
+<div id="logo-anim">
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 90,35 90,65 50,90 10,65 10,35' fill='none' stroke='white' stroke-width='4'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='white' font-family='serif'%3ES%3C/text%3E%3C/svg%3E" alt="Stone and Acres logo">
+  <span id="logo-text-anim">Stone & Acres</span>
+</div>
+
+<!-- MAIN PAGE -->
+<div id="main-page">
+
+  <!-- HEADER -->
+  <header id="site-header">
+    <div class="header-logo">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 90,35 90,65 50,90 10,65 10,35' fill='none' stroke='%232d6a4f' stroke-width='4'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='%232d6a4f' font-family='serif'%3ES%3C/text%3E%3C/svg%3E" alt="logo">
+      <span>Stone & Acres</span>
+    </div>
+    <div class="header-badge">A Decade of Dreams ✦ 2016–2026</div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-ten" aria-hidden="true">10</div>
+    <p class="hero-eyebrow">2016 — 2026 &nbsp;✦&nbsp; A Decade of Trust</p>
+    <h1 class="hero-title">
+      Ten years of turning<br>
+      <em>earth into legacy</em>
+    </h1>
+    <div class="hero-divider"><span>✦</span></div>
+    <p class="hero-subtitle">
+      Every plot. Every family. Every dream rooted in this land —<br>
+      this is our celebration of a decade well lived.
+    </p>
+  </section>
+
+  <!-- INVITATION CARD -->
+  <section id="envelope-section">
+    <div class="env-bg-ten" aria-hidden="true">10</div>
+    <p class="env-label">You are cordially invited</p>
+    <div class="invitation-card">
+      <span class="card-ornament">✦ &nbsp; ✦ &nbsp; ✦</span>
+      <p class="card-to">A special message for</p>
+      <p class="card-name">Our Dear Friend &amp; Family</p>
+      <div class="card-divider"></div>
+      <p class="card-body">
+        Ten years ago, we planted a seed — not just in the soil of Ponmar,
+        but in the hearts of every family who believed in us.<br><br>
+        Today, those seeds have grown into homes, legacies, and futures
+        more beautiful than we ever imagined.<br><br>
+        To celebrate <strong>a decade of Stone & Acres</strong>,
+        we have curated something truly special — just for you.
+        Because you are not just our customer.<br><br>
+        <strong>You are part of our story.</strong>
+      </p>
+      <p class="card-date">June 2026 &nbsp;✦&nbsp; Ponmar, Chennai</p>
+      <div class="card-seal">S &amp; A</div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section id="offers-section">
+    <p class="section-eyebrow">Decade Anniversary Gifts</p>
+    <h2 class="section-title">Our <em>10th year</em> offerings</h2>
+    <p class="section-sub">Crafted with love. Available for a limited time.</p>
+
+    <div class="offers-grid">
+      <div class="offer-card">
+        <div class="offer-number">01</div>
+        <div class="offer-title">10 Trees in Your Name</div>
+        <p class="offer-desc">Every plot purchased comes with 10 native trees planted in your name — with a GPS certificate and a name tag rooted in the same soil as your land.</p>
+        <span class="offer-tag">Nature ✦ Legacy</span>
+      </div>
+      <div class="offer-card">
+        <div class="offer-number">02</div>
+        <div class="offer-title">First 10 Families Legacy Wall</div>
+        <p class="offer-desc">The first 10 buyers receive a personalised granite nameplate at the project entrance — your family name, carved in stone, forever.</p>
+        <span class="offer-tag">Exclusive ✦ Limited</span>
+      </div>
+      <div class="offer-card">
+        <div class="offer-number">03</div>
+        <div class="offer-title">Pay in 10 — Zero Interest</div>
+        <p class="offer-desc">Own your dream plot with a 10-month zero-interest payment plan. No bank, no stress. Directly from us to you.</p>
+        <span class="offer-tag">Financial ✦ Flexible</span>
+      </div>
+      <div class="offer-card">
+        <div class="offer-number">04</div>
+        <div class="offer-title">Decade Deal — 10% Off</div>
+        <p class="offer-desc">A flat 10% discount on select plots for exactly 10 days. Simple, powerful, and worth every moment of waiting.</p>
+        <span class="offer-tag">10 Days Only ✦ Act Now</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta-section">
+    <div class="cta-bg-ten" aria-hidden="true">10</div>
+    <h2 class="cta-title">Your land is<br><em>waiting for you</em></h2>
+    <p class="cta-sub">Be part of the next decade of Stone & Acres</p>
+    <a class="cta-btn" href="https://wa.me/919XXXXXXXXX?text=Hi%2C%20I%20am%20interested%20in%20the%2010th%20Anniversary%20offer" target="_blank">
+      Claim Your Anniversary Gift
+    </a>
+    <p class="cta-note">Limited to the anniversary period only ✦ Don't miss your moment</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 90,35 90,65 50,90 10,65 10,35' fill='none' stroke='white' stroke-width='4'/%3E%3Ctext x='50' y='58' font-size='28' text-anchor='middle' fill='white' font-family='serif'%3ES%3C/text%3E%3C/svg%3E" alt="logo">
+    <span>Stone & Acres &nbsp;✦&nbsp; Passionate. Purposeful. &nbsp;✦&nbsp; Since 2016</span>
+  </footer>
+
+</div>
+
+<script>
+// ── PARTICLES ──
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 1.5 + 0.3,
+    dx: (Math.random() - 0.5) * 0.4,
+    dy: (Math.random() - 0.5) * 0.4,
+    alpha: Math.random() * 0.6 + 0.2
+  });
+}
+
+function animParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(82,183,136,${p.alpha})`;
+    ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ── OPEN INVITATION ──
+function openInvitation() {
+  spawnFloatingTens();
+
+  const intro = document.getElementById('intro');
+  const logoAnim = document.getElementById('logo-anim');
+  const mainPage = document.getElementById('main-page');
+  const header = document.getElementById('site-header');
+
+  // Show logo in center
+  logoAnim.style.opacity = '1';
+  logoAnim.style.position = 'fixed';
+  logoAnim.style.top = '50%';
+  logoAnim.style.left = '50%';
+  logoAnim.style.transform = 'translate(-50%, -50%)';
+  logoAnim.style.transition = 'none';
+
+  // Fade out intro
+  intro.style.transition = 'opacity 0.8s ease';
+  intro.style.opacity = '0';
+  setTimeout(() => { intro.style.display = 'none'; }, 800);
+
+  // Animate logo to top right
+  setTimeout(() => {
+    logoAnim.style.transition = 'all 1.2s cubic-bezier(0.16,1,0.3,1)';
+    logoAnim.style.top = '20px';
+    logoAnim.style.left = 'auto';
+    logoAnim.style.right = '40px';
+    logoAnim.style.transform = 'translate(0,0)';
+    const lt = document.getElementById('logo-text-anim');
+    if (lt) lt.style.display = 'none';
+  }, 900);
+
+  // Show main page
+  setTimeout(() => {
+    mainPage.style.transition = 'opacity 1s ease';
+    mainPage.style.opacity = '1';
+    header.style.transition = 'opacity 1s ease';
+    header.style.opacity = '1';
+    logoAnim.style.opacity = '0';
+  }, 1800);
+
+  document.body.style.overflow = 'auto';
+}
+
+// ── FLOATING 10s ──
+function spawnFloatingTens() {
+  const colors = ['#52b788','#c9a84c','#2d6a4f','#a8d5ba'];
+  const sizes = [32, 48, 64, 80, 96, 24];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'float-ten';
+    el.textContent = '10';
+    const size = sizes[Math.floor(Math.random() * sizes.length)];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.cssText = `
+      left: ${Math.random() * 90}vw;
+      top: ${Math.random() * 80 + 10}vh;
+      font-size: ${size}px;
+      -webkit-text-stroke: 1px ${color};
+      --dur: ${1.5 + Math.random() * 2}s;
+      --delay: ${Math.random() * 1.5}s;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+</script>
+</body>
+</html>
